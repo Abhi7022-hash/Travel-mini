@@ -1,1 +1,25 @@
-
+{% extends "layout.html" %}
+{% block content %}
+  <section>
+    <h2>Flights</h2>
+    {% if flights %}
+      <ul class="items">
+      {% for f in flights %}
+        <li><strong>{{ f.from }} → {{ f.to }}</strong> — Depart: {{ f.depart }} — ${{ f.price }}</li>
+      {% endfor %}
+      </ul>
+    {% else %}
+      <p>No flights available right now.</p>
+    {% endif %}
+    <h2>Hotels</h2>
+    {% if hotels %}
+      <ul class="items">
+      {% for h in hotels %}
+        <li><strong>{{ h.name }}</strong> — {{ h.city }} — ${{ h.price }} / night</li>
+      {% endfor %}
+      </ul>
+    {% else %}
+      <p>No hotels available right now.</p>
+    {% endif %}
+  </section>
+{% endblock %}
