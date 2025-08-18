@@ -1,1 +1,8 @@
-
+{% extends "layout.html" %}
+{% block content %}
+  <section>
+    <h2>Welcome to {{ app_name }}</h2>
+    <p>Browse flights and hotels.</p>
+    <p><a class="btn" href="{{ url_for('listings') }}">Browse Listings</a></p>
+  </section>
+{% endblock %}
