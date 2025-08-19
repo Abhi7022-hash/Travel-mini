@@ -1,1 +1,9 @@
-
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flights
+  namespace: travel
+  labels:
+    app: flights
+spec:
+  replicas: 1
