@@ -7,3 +7,36 @@ metadata:
     app: flights
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: flights
+  templates:
+    metadata:
+      labels:
+        app: flights
+    spec:
+      containers:
+        - name: flights
+          image: travel-flights:dev
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64mi"
+            limits:
+              cpu: "200m"
+              memory: "256mi"
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 5000
+            initialDelaySeconds: 2
+            periodSeconds: 5
