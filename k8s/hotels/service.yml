@@ -1,1 +1,15 @@
-
+apiVersion: v1
+kind: Service
+metadata:
+  name: hotels
+  namespace: travel
+  labels:
+    app: hotels
+spec:
+  selector:
+    app: hotels
+  ports:
+    - port: 5000
+      targetPort: 5000
+      protocol: TCP
+  type: ClusterIP
