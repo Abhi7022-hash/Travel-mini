@@ -10,24 +10,24 @@ spec:
   selector:
     matchLabels:
       app: flights
-  templates:
+  template:
     metadata:
       labels:
         app: flights
     spec:
       containers:
         - name: flights
-          image: travel-flights:dev
+          image: abhishek661/travel-flights:dev
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5000
           resources:
             requests:
               cpu: "50m"
-              memory: "64mi"
+              memory: "64Mi"
             limits:
               cpu: "200m"
-              memory: "256mi"
+              memory: "256Mi"
           livenessProbe:
             httpGet:
               path: /healthz
