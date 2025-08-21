@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: hotels
-          image: travel-hotels:dev
+          image: abhishek661/travel-hotels:dev
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5000
