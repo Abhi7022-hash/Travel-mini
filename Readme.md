@@ -6,8 +6,7 @@ Travel-mini: a small Minikube-ready demo with a Gateway (frontend), Flights serv
 Features:
 - Flask microservices (gateway, flights, hotels)
 - HTML/CSS frontend served by gateway, which proxies to internal services
-- Kubernetes manifests: Namespace, ConfigMap, Secret, Deployments, Services, Ingress
-- Liveness/readiness probes and resource requests/limits (you can increase the values of both)
+- Kubernetes manifests: Namespace, ConfigMap, Secret, Deployments, Services, Ingress.
 - Basic pytest tests for each service
 
 
