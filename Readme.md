@@ -7,20 +7,18 @@ Features:
 - Flask microservices (gateway, flights, hotels)
 - HTML/CSS frontend served by gateway, which proxies to internal services
 - Kubernetes manifests: Namespace, ConfigMap, Secret, Deployments, Services, Ingress
-- Liveness/readiness probes and resource requests/limits
-- Makefile helpers to build images in Minikube and deploy
+- Liveness/readiness probes and resource requests/limits (you can increase the values of both)
 - Basic pytest tests for each service
-- Jenkinsfile example for CI/CD (build/push/deploy)
+
 
 Prereqs:
 - minikube
 - kubectl
 - docker
-- (optional) Jenkins for CI/CD
 
 Quick local steps (Minikube)
 1. Start minikube and enable ingress:
-   minikube start --memory=4096 --cpus=2
+   minikube start 
    minikube addons enable ingress
 
 2. Build Docker images inside Minikube:
@@ -38,13 +36,47 @@ Alternatively, port-forward:
    kubectl -n travel port-forward svc/gateway 8080:80
    Open: http://localhost:8080
 
-Makefile targets
-- minikube-build : builds and tags images inside Minikube
-- deploy : applies k8s manifests
-- delete : removes resources
-- test : run pytest for all services
+# Image names and tag
+GATEWAY_IMAGE ?= travel-gateway:dev
+FLIGHTS_IMAGE ?= travel-flights:dev
+HOTELS_IMAGE ?= travel-hotels:dev
+NAMESPACE ?= travel
 
-Security note:
-- This demo stores a simple SECRET in k8s Secret for demo purposes. Do not store production secrets in plain YAML.
+minikube-docker-env:
+	@echo "Run the following in your shell to use minikube's docker daemon:"
+	@echo "  eval $$(minikube -p minikube docker-env)"
 
-If you want CI/CD tips for Jenkins (credentials, kubeconfig), see Jenkinsfile.
+minikube-build:
+	# Build images inside minikube docker daemon
+	@echo "Building images inside Minikube's Docker daemon..."
+	@eval $$(minikube -p minikube docker-env) && \
+	docker build -t $(GATEWAY_IMAGE) ./services/gateway && \
+	docker build -t $(FLIGHTS_IMAGE) ./services/flights && \
+	docker build -t $(HOTELS_IMAGE) ./services/hotels
+
+deploy:
+	kubectl apply -f k8s/namespace.yaml
+	kubectl -n $(NAMESPACE) apply -f k8s/configmap.yaml
+	kubectl -n $(NAMESPACE) apply -f k8s/secret.yaml
+	kubectl -n $(NAMESPACE) apply -f k8s/flights-deployment.yaml
+	kubectl -n $(NAMESPACE) apply -f k8s/hotels-deployment.yaml
+	kubectl -n $(NAMESPACE) apply -f k8s/gateway-deployment.yaml
+	kubectl -n $(NAMESPACE) apply -f k8s/flights-service.yaml
+	kubectl -n $(NAMESPACE) apply -f k8s/hotels-service.yaml
+	kubectl -n $(NAMESPACE) apply -f k8s/gateway-service.yaml
+	-kubectl -n $(NAMESPACE) apply -f k8s/ingress.yaml
+
+delete:
+	kubectl -n $(NAMESPACE) delete -f k8s/ingress.yaml || true
+	kubectl -n $(NAMESPACE) delete -f k8s/gateway-service.yaml || true
+	kubectl -n $(NAMESPACE) delete -f k8s/hotels-service.yaml || true
+	kubectl -n $(NAMESPACE) delete -f k8s/flights-service.yaml || true
+	kubectl -n $(NAMESPACE) delete -f k8s/gateway-deployment.yaml || true
+	kubectl -n $(NAMESPACE) delete -f k8s/hotels-deployment.yaml || true
+	kubectl -n $(NAMESPACE) delete -f k8s/flights-deployment.yaml || true
+	kubectl -n $(NAMESPACE) delete -f k8s/secret.yaml || true
+	kubectl -n $(NAMESPACE) delete -f k8s/configmap.yaml || true
+	kubectl delete ns $(NAMESPACE) || true
+
+test:
+	python3 -m pytest -q services/gateway/tests services/flights/tests services/hotels/tests
