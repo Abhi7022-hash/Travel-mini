@@ -58,7 +58,7 @@ deploy:
 	kubectl apply -f k8s/namespace.yaml
 	kubectl -n $(NAMESPACE) apply -f k8s/configmap.yaml
 	kubectl -n $(NAMESPACE) apply -f k8s/secret.yaml
-	kubectl -n $(NAMESPACE) apply -f k8s/flights-deployment.yaml
+	kubectl -n $(NAMESPACE) apply -f k8s/flights-deployment.yaml 
 	kubectl -n $(NAMESPACE) apply -f k8s/hotels-deployment.yaml
 	kubectl -n $(NAMESPACE) apply -f k8s/gateway-deployment.yaml
 	kubectl -n $(NAMESPACE) apply -f k8s/flights-service.yaml
