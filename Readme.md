@@ -1,4 +1,4 @@
-
+ 
 # travel-mini
 
 Travel-mini: a small Minikube-ready demo with a Gateway (frontend), Flights service and Hotels service.
